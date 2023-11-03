@@ -1,0 +1,364 @@
+Fish[] fishes;
+Character character;
+int numFish = 5;
+int collisions = 0;
+
+void setup() {
+  size(800, 600);
+  noStroke();
+  fishes = new Fish[numFish];
+  for (int i = 0; i < numFish; i++) {
+    float x = random(width);
+    float y = random(height);
+    float k = random(0.1, 0.3);
+    fishes[i] = new Fish(x, y, k);
+  }
+
+  float charX = random(width);
+  float charY = random(height);
+  character = new Character(charX, charY);
+}
+
+void draw() {
+  background(173, 216, 230);
+
+  for (Fish fish : fishes) {
+    fish.display();
+    fish.move(); // 물고기들을 자동으로 움직이게 호출
+    if (character.hits(fish)) {
+      // 각 물체의 속도를 반대로 변경
+      fish.vx *= -1;
+      fish.vy *= -1;
+      character.dx *= -1;
+      character.dy *= -1;
+      collisions++;
+      if (collisions >= 11) {
+        // 모든 물고기와 충돌 횟수가 충족될 경우 프로그램 종료
+        noLoop(); // 프로그램 중지
+      }
+    }
+  }
+
+  character.display();
+  character.move(); // 캐릭터를 자동으로 움직이게 호출
+}
+
+class Fish {
+  float x, y;
+  float k;
+  float vx, vy; // 움직임을 제어하는 변수
+
+  Fish(float x, float y, float k) {
+    this.x = x;
+    this.y = y;
+    this.k = k;
+    this.vx = random(2, 5); // 초기 움직임 속도 설정
+    this.vy = random(-3, 3);
+  }
+
+  void display() {
+    fin();
+    body();
+    eyemouth();
+    tail();
+  }
+
+  void body() {
+    stroke(0, 100, 255);
+    fill(0, 100, 255);
+    ellipse(x, y, 807 * k, 333 * k);
+    fill(255);
+    circle(x + 250 * k, y - 100 * k, 70 * k);
+    fill(0);
+    stroke(0);
+    circle(x + 260 * k, y - 100 * k, 40 * k);
+    strokeWeight(10 * k);
+    noFill();
+    arc(x + 50 * k, y, 50 * k, 50 * k, -PI / 2, PI / 2);
+    arc(x + 80 * k, y, 50 * k, 50 * k, -PI / 2, PI / 2);
+    arc(x + 110 * k, y, 50 * k, 50 * k, -PI / 2, PI / 2);
+    strokeWeight(1);
+  }
+
+  void eyemouth() {
+    stroke(0, 100, 255);
+    fill(200, 0, 0);
+    triangle(x + 200 * k, y + 50 * k, x + 250 * k, y + 90 * k, x + 300 * k, y + 30 * k);
+    fill(125);
+    circle(x + 370 * k, y - 20 * k, 20 * k);
+  }
+
+  void fin() {
+    fill(0, 100, 255);
+    beginShape();
+    vertex(x, y);
+    vertex(x + 150 * k, y - 200 * k);
+    vertex(x, y - 400 * k);
+    vertex(x + 75 * k, y - 200 * k);
+    endShape();
+    beginShape();
+    vertex(x, y);
+    vertex(x + 150 * k, y + 200 * k);
+    vertex(x, y + 400 * k);
+    vertex(x + 75 * k, y + 200 * k);
+    endShape();
+  }
+
+  void tail() {
+    fill(0, 100, 255);
+    triangle(x - 200 * k, y, x - 500 * k, y - 200 * k, x - 500 * k, y + 200 * k); // ...
+  }
+
+  void move() {
+    x += vx;
+    y += vy;
+    // 경계를 넘어가면 반대편으로 이동
+    if (x > width) {
+      vx = -vx;
+    }
+    if (x < 0) {
+      vx = -vx;
+    }
+    if (y > height) {
+      y = 0;
+    }
+    if (y < 0) {
+      y = height;
+    }
+  }
+}
+
+class Character {
+  float x, y;
+  float d;
+  float dx, dy; // 움직임을 제어하는 변수
+
+  Character(float x, float y) {
+    this.x = x;
+    this.y = y;
+    this.d = 5;
+    this.dx = random(-4, 4); // 초기 움직임 설정
+    this.dy = random(-3, 3);
+  }
+
+  void display() {
+    mych(x, y, d);
+  }
+
+  void move() {
+    x += dx;
+    y += dy;
+    // 경계를 넘어가면 반대편으로 이동
+    if (x > width) {
+      x = 0;
+    }
+    if (x < 0) {
+      x = width;
+    }
+    if (y > height) {
+      y = 0;
+    }
+    if (y < 0) {
+      y = height;
+    }
+  }
+
+  boolean hits(Fish fish) {
+    float distance = dist(x, y, fish.x, fish.y);
+    return distance < d + fish.k * 377.5;
+  }
+}
+
+void mych(float x, float y, float d) {
+  fill(255, 255, 255);
+  stroke(0);
+  circle(x, y, 20 * d);
+  fill(255, 255, 255);
+  stroke(0);
+  fill(0);
+  circle(x - 3 * d, y - 2 * d, 3 * d);
+  fill(0);
+  circle(x + 3 * d, y - 2 * d, 3 * d);
+}
+Fish[] fishes;
+Character character;
+int numFish = 5;
+int collisions = 0;
+
+void setup() {
+  size(800, 600);
+  noStroke();
+  fishes = new Fish[numFish];
+  for (int i = 0; i < numFish; i++) {
+    float x = random(width);
+    float y = random(height);
+    float k = random(0.1, 0.3);
+    fishes[i] = new Fish(x, y, k);
+  }
+
+  float charX = random(width);
+  float charY = random(height);
+  character = new Character(charX, charY);
+}
+
+void draw() {
+  background(173, 216, 230);
+
+  for (Fish fish : fishes) {
+    fish.display();
+    fish.move(); // 물고기들을 자동으로 움직이게 호출
+    if (character.hits(fish)) {
+      // 각 물체의 속도를 반대로 변경
+      fish.vx *= -1;
+      fish.vy *= -1;
+      character.dx *= -1;
+      character.dy *= -1;
+      collisions++;
+      if (collisions >= 11) {
+        // 모든 물고기와 충돌 횟수가 충족될 경우 프로그램 종료
+        noLoop(); // 프로그램 중지
+      }
+    }
+  }
+
+  character.display();
+  character.move(); // 캐릭터를 자동으로 움직이게 호출
+}
+
+class Fish {
+  float x, y;
+  float k;
+  float vx, vy; // 움직임을 제어하는 변수
+
+  Fish(float x, float y, float k) {
+    this.x = x;
+    this.y = y;
+    this.k = k;
+    this.vx = random(2, 5); // 초기 움직임 속도 설정
+    this.vy = random(-3, 3);
+  }
+
+  void display() {
+    fin();
+    body();
+    eyemouth();
+    tail();
+  }
+
+  void body() {
+    stroke(0, 100, 255);
+    fill(0, 100, 255);
+    ellipse(x, y, 807 * k, 333 * k);
+    fill(255);
+    circle(x + 250 * k, y - 100 * k, 70 * k);
+    fill(0);
+    stroke(0);
+    circle(x + 260 * k, y - 100 * k, 40 * k);
+    strokeWeight(10 * k);
+    noFill();
+    arc(x + 50 * k, y, 50 * k, 50 * k, -PI / 2, PI / 2);
+    arc(x + 80 * k, y, 50 * k, 50 * k, -PI / 2, PI / 2);
+    arc(x + 110 * k, y, 50 * k, 50 * k, -PI / 2, PI / 2);
+    strokeWeight(1);
+  }
+
+  void eyemouth() {
+    stroke(0, 100, 255);
+    fill(200, 0, 0);
+    triangle(x + 200 * k, y + 50 * k, x + 250 * k, y + 90 * k, x + 300 * k, y + 30 * k);
+    fill(125);
+    circle(x + 370 * k, y - 20 * k, 20 * k);
+  }
+
+  void fin() {
+    fill(0, 100, 255);
+    beginShape();
+    vertex(x, y);
+    vertex(x + 150 * k, y - 200 * k);
+    vertex(x, y - 400 * k);
+    vertex(x + 75 * k, y - 200 * k);
+    endShape();
+    beginShape();
+    vertex(x, y);
+    vertex(x + 150 * k, y + 200 * k);
+    vertex(x, y + 400 * k);
+    vertex(x + 75 * k, y + 200 * k);
+    endShape();
+  }
+
+  void tail() {
+    fill(0, 100, 255);
+    triangle(x - 200 * k, y, x - 500 * k, y - 200 * k, x - 500 * k, y + 200 * k); // ...
+  }
+
+  void move() {
+    x += vx;
+    y += vy;
+    // 경계를 넘어가면 반대편으로 이동
+    if (x > width) {
+      vx = -vx;
+    }
+    if (x < 0) {
+      vx = -vx;
+    }
+    if (y > height) {
+      y = 0;
+    }
+    if (y < 0) {
+      y = height;
+    }
+  }
+}
+
+class Character {
+  float x, y;
+  float d;
+  float dx, dy; // 움직임을 제어하는 변수
+
+  Character(float x, float y) {
+    this.x = x;
+    this.y = y;
+    this.d = 5;
+    this.dx = random(-4, 4); // 초기 움직임 설정
+    this.dy = random(-3, 3);
+  }
+
+  void display() {
+    mych(x, y, d);
+  }
+
+  void move() {
+    x += dx;
+    y += dy;
+    // 경계를 넘어가면 반대편으로 이동
+    if (x > width) {
+      x = 0;
+    }
+    if (x < 0) {
+      x = width;
+    }
+    if (y > height) {
+      y = 0;
+    }
+    if (y < 0) {
+      y = height;
+    }
+  }
+
+  boolean hits(Fish fish) {
+    float distance = dist(x, y, fish.x, fish.y);
+    return distance < d + fish.k * 377.5;
+  }
+}
+
+void mych(float x, float y, float d) {
+  fill(255, 255, 255);
+  stroke(0);
+  circle(x, y, 20 * d);
+  fill(255, 255, 255);
+  stroke(0);
+  fill(0);
+  circle(x - 3 * d, y - 2 * d, 3 * d);
+  fill(0);
+  circle(x + 3 * d, y - 2 * d, 3 * d);
+}
